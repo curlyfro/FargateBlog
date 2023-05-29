@@ -65,8 +65,6 @@ public class EcsRepository : IEcsRepository
                 },
                 Overrides = new TaskOverride()
                 {
-                    TaskRoleArn = @"arn:aws:iam::676229420717:role/ecsTaskExecutionRole",
-                    ExecutionRoleArn = @"arn:aws:iam::676229420717:role/ecsTaskExecutionRole",
                     ContainerOverrides = new List<ContainerOverride>()
                     {
                        new ContainerOverride()

@@ -33,6 +33,7 @@ public class IamRoleStack : Stack
             AssumedBy = new ServicePrincipal("ecs-tasks.amazonaws.com"),
             ManagedPolicies = new[]
             {
+                ManagedPolicy.FromAwsManagedPolicyName("CloudWatchFullAccess"),
                 ManagedPolicy.FromAwsManagedPolicyName("AmazonS3FullAccess"),
                 ManagedPolicy.FromAwsManagedPolicyName("AmazonECS_FullAccess"),
                 ManagedPolicy.FromAwsManagedPolicyName("service-role/AmazonECSTaskExecutionRolePolicy"),
