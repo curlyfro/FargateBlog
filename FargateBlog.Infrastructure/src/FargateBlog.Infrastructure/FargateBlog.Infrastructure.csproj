@@ -9,12 +9,17 @@
 
   <ItemGroup>
     <!-- CDK Construct Library dependencies -->
-    <PackageReference Include="Amazon.CDK.Lib" Version="2.80.0" />
-    <PackageReference Include="Constructs" Version="[10.0.0,11.0.0)" />
+    <PackageReference Include="Amazon.CDK.Lib" Version="2.81.0" />
+    <PackageReference Include="Constructs" Version="10.2.36" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.3" />
 
     <!-- jsii Roslyn analyzers (un-comment to obtain compile-time checks for missing required props
     <PackageReference Include="Amazon.Jsii.Analyzers" Version="*" PrivateAssets="all" />
     -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FargateBlog.Core\FargateBlog.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "KameeyoContainers.Encoder": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
