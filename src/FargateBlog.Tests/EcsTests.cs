@@ -6,7 +6,7 @@ namespace FargateBlog.Tests;
 
 public class EcsTests : BaseSetup
 {
-    [TestCase("fargate-blog-originals", "output4", "subnet-09bd32636ad8f0064", "subnet-01450578db17c4866", "sg-061d1edaff3dde3ba")]
+    [TestCase("fargate-blog-originals", "test_1.mp4", "subnet-09bd32636ad8f0064", "subnet-01450578db17c4866", "sg-061d1edaff3dde3ba")]
     public async Task can_run_task(
         string bucketName,
         string key,

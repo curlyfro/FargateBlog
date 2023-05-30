@@ -50,5 +50,5 @@ for (int i = 0; i < files.Count; i++)
 
     PutObjectResponse response = await s3Client.PutObjectAsync(putObjectRequest);
 
-    Console.WriteLine("success");
+    Console.WriteLine($"response: {response.HttpStatusCode}");
 }

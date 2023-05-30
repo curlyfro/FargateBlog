@@ -1,5 +1,5 @@
 {
-	"app": "dotnet run --project src/FargateBlog.Infrastructure.csproj",
+	"app": "dotnet run --project src/FargateBlog.Infrastructure/FargateBlog.Infrastructure.csproj",
 	"watch": {
 		"include": ["**"],
 		"exclude": [

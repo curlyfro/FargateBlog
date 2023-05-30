@@ -19,6 +19,7 @@ public class IamRoleStack : Stack
             AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
             ManagedPolicies = new[]
             {
+                ManagedPolicy.FromAwsManagedPolicyName("CloudWatchFullAccess"),
                 ManagedPolicy.FromAwsManagedPolicyName("AWSLambdaExecute"),
                 ManagedPolicy.FromAwsManagedPolicyName("AmazonS3FullAccess"),
                 ManagedPolicy.FromAwsManagedPolicyName("AmazonECS_FullAccess")

@@ -5,6 +5,7 @@ using FargateBlog.Core;
 using Amazon.CDK.AWS.Lambda;
 using Amazon.CDK.AWS.Lambda.EventSources;
 using System.Collections.Generic;
+using Amazon.CDK.AWS.EC2;
 
 namespace FargateBlog.Infrastructure;
 
@@ -12,24 +13,36 @@ public class S3Stack : Stack
 {
     internal S3Stack(Construct scope, string id, S3StackProps props = null) : base(scope, id, props)
     {
-        var originalsName = $"{Constants.AppName.ToHypenCase()}-originals";
-        var originalsBucket = new Bucket(this, originalsName, new BucketProps
+        try
         {
-            BucketName = originalsName
-        });
+            var originalsName = $"{Constants.AppName.ToHypenCase()}-originals";
+            var originalsBucket = new Bucket(this, originalsName, new BucketProps
+            {
+                BucketName = originalsName
+            });
 
-        var s3PutEventSource = new S3EventSource(originalsBucket, new S3EventSourceProps
+            var s3PutEventSource = new S3EventSource(originalsBucket, new S3EventSourceProps
+            {
+                Events = new[] { EventType.OBJECT_CREATED }
+            });
+
+            var s3TriggerFunction = S3TriggerFunction(props);
+            s3TriggerFunction.AddEventSource(s3PutEventSource);
+
+            var encodedName = $"{Constants.AppName.ToHypenCase()}-encoded";
+            var bucket = new Bucket(this, encodedName, new BucketProps
+            {
+                BucketName = encodedName
+            });
+        }
+        catch (System.Exception)
         {
-            Events = new[] { EventType.OBJECT_CREATED }
-        });
+        }
 
-        var s3TriggerFunction = S3TriggerFunction(props);
-        s3TriggerFunction.AddEventSource(s3PutEventSource);
-
-        var encodedName = $"{Constants.AppName.ToHypenCase()}-encoded";
-        var bucket = new Bucket(this, encodedName, new BucketProps
+        var s3GatewayEndpointName = $"{Constants.AppName.ToHypenCase()}-s3-endpoint";
+        var s3GatewayEndpoint = props.Vpc.AddGatewayEndpoint(s3GatewayEndpointName, new GatewayVpcEndpointOptions
         {
-            BucketName = encodedName
+            Service = GatewayVpcEndpointAwsService.S3,
         });
     }
 
@@ -51,7 +64,8 @@ public class S3Stack : Stack
             Runtime = Runtime.DOTNET_6,
             Code = Code.FromAsset(asset),
             Handler = handler,
-            Environment = environment
+            Environment = environment,
+            MemorySize = 256
         });
         return encodeLambdaFunction;
     }
