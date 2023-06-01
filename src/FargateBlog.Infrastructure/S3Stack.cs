@@ -13,31 +13,27 @@ public class S3Stack : Stack
 {
     internal S3Stack(Construct scope, string id, S3StackProps props = null) : base(scope, id, props)
     {
-        try
+        var originalsBucketName = $"{Constants.AppName.ToHypenCase()}-originals-{props.Env.Account}-{props.Env.Region.ToHypenCase()}";
+        var originalsBucket = new Bucket(this, originalsBucketName, new BucketProps
         {
-            var originalsName = $"{Constants.AppName.ToHypenCase()}-originals";
-            var originalsBucket = new Bucket(this, originalsName, new BucketProps
-            {
-                BucketName = originalsName
-            });
+            BucketName = originalsBucketName
+        });
+        props.OriginalsBucketName = originalsBucketName;
 
-            var s3PutEventSource = new S3EventSource(originalsBucket, new S3EventSourceProps
-            {
-                Events = new[] { EventType.OBJECT_CREATED }
-            });
-
-            var s3TriggerFunction = S3TriggerFunction(props);
-            s3TriggerFunction.AddEventSource(s3PutEventSource);
-
-            var encodedName = $"{Constants.AppName.ToHypenCase()}-encoded";
-            var bucket = new Bucket(this, encodedName, new BucketProps
-            {
-                BucketName = encodedName
-            });
-        }
-        catch (System.Exception)
+        var encodedBucketName = $"{Constants.AppName.ToHypenCase()}-encoded-{props.Env.Account}-{props.Env.Region.ToHypenCase()}";
+        var encodedBucke = new Bucket(this, encodedBucketName, new BucketProps
         {
-        }
+            BucketName = encodedBucketName
+        });
+        props.EncodedBucketName = encodedBucketName;
+
+        var s3PutEventSource = new S3EventSource(originalsBucket, new S3EventSourceProps
+        {
+            Events = new[] { EventType.OBJECT_CREATED }
+        });
+
+        var s3TriggerFunction = S3TriggerFunction(props);
+        s3TriggerFunction.AddEventSource(s3PutEventSource);
 
         var s3GatewayEndpointName = $"{Constants.AppName.ToHypenCase()}-s3-endpoint";
         var s3GatewayEndpoint = props.Vpc.AddGatewayEndpoint(s3GatewayEndpointName, new GatewayVpcEndpointOptions
@@ -51,7 +47,9 @@ public class S3Stack : Stack
         var environment = new Dictionary<string, string> {
             { "privateSubnet1", props.Vpc.PrivateSubnets[0].SubnetId },
             { "privateSubnet2", props.Vpc.PrivateSubnets[1].SubnetId },
-            { "vpcSecurityGroup", props.VpcSecurityGroup.SecurityGroupId }
+            { "vpcSecurityGroup", props.VpcSecurityGroup.SecurityGroupId },
+            { "originalsBucketName", props.OriginalsBucketName },
+            { "encodedBucketName", props.EncodedBucketName }
         };
 
         var functionName = $"{Constants.AppName.ToHypenCase()}-encoding-lambda";
@@ -65,7 +63,7 @@ public class S3Stack : Stack
             Code = Code.FromAsset(asset),
             Handler = handler,
             Environment = environment,
-            MemorySize = 256
+            MemorySize = 512
         });
         return encodeLambdaFunction;
     }

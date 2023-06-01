@@ -8,9 +8,15 @@ It uses the [.NET CLI](https://docs.microsoft.com/dotnet/articles/core/) to comp
 
 ## Installation instructions
 
+download nodejs
+https://nodejs.org/
+* `dotnet tool install -g aws.deploy.tools`
+* `npm install -g aws-cdk`
+
 from root folder
+* `cdk bootstrap`
 * `cdk synth`
-* `cdk deploy --all -f`
+* `cdk deploy --all`
 	
 login to aws ecr
 * `aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin [account id].dkr.ecr.[region].amazonaws.com`

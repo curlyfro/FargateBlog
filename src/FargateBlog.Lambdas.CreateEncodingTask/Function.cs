@@ -35,10 +35,19 @@ public class Function
         var privateSubnet1 = Environment.GetEnvironmentVariable("privateSubnet1") ?? "";
         var privateSubnet2 = Environment.GetEnvironmentVariable("privateSubnet2") ?? "";
         var vpcSecurityGroup = Environment.GetEnvironmentVariable("vpcSecurityGroup") ?? "";
+        var originalsBucketName = Environment.GetEnvironmentVariable("originalsBucketName") ?? "";
+        var encodedBucketName = Environment.GetEnvironmentVariable("encodedBucketName") ?? "";
 
         foreach (S3Event.S3EventNotificationRecord? message in evnt.Records)
         {
-            await CreateEcsTaskAsync(privateSubnet1, privateSubnet2, vpcSecurityGroup, message, context);
+            await CreateEcsTaskAsync(
+                privateSubnet1, 
+                privateSubnet2, 
+                vpcSecurityGroup,
+                originalsBucketName,
+                encodedBucketName,
+                message, 
+                context);
         }
     }
 
@@ -46,6 +55,8 @@ public class Function
         string privateSubnet1,
         string privateSubnet2,
         string vpcSecurityGroup,
+        string originalsBucketName,
+        string encodedBucketName,
         S3Event.S3EventNotificationRecord message,
         ILambdaContext context)
     {
@@ -58,12 +69,16 @@ public class Function
             var envPrivateSubnet1 = new Amazon.ECS.Model.KeyValuePair() { Name = "privateSubnet1", Value = privateSubnet1 };
             var envPrivateSubnet2 = new Amazon.ECS.Model.KeyValuePair() { Name = "privateSubnet2", Value = privateSubnet2 };
             var envpcSecurityGroup = new Amazon.ECS.Model.KeyValuePair() { Name = "vpcSecurityGroup", Value = vpcSecurityGroup };
+            var envOriginalsBucketName = new Amazon.ECS.Model.KeyValuePair() { Name = "originalsBucketName", Value = originalsBucketName };
+            var envEncodedBucketName = new Amazon.ECS.Model.KeyValuePair() { Name = "encodedBucketName", Value = encodedBucketName };
             environment.Add(envEnableMetaData);
             environment.Add(envBuckeName);
             environment.Add(envKey);
             environment.Add(envPrivateSubnet1);
             environment.Add(envPrivateSubnet2);
             environment.Add(envpcSecurityGroup);
+            environment.Add(envOriginalsBucketName);
+            environment.Add(envEncodedBucketName);
 
             Console.WriteLine($"key.Value: {envKey.Value}");
 

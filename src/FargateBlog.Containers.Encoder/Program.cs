@@ -10,17 +10,18 @@ using FargateBlog.Core;
 var region = RegionEndpoint.GetBySystemName(Constants.Region);
 var s3Client = new AmazonS3Client(region);
 
-var envBuckeName = Environment.GetEnvironmentVariable("BuckeName") ?? "";
+var envOriginalsBucketName = Environment.GetEnvironmentVariable("originalsBucketName") ?? "";
+var envEncodedBucketName = Environment.GetEnvironmentVariable("encodedBucketName") ?? "";
 var envObjectKey = Environment.GetEnvironmentVariable("ObjectKey") ?? "";
 
 Console.WriteLine($"in Program **********************");
 
-Console.WriteLine($"envBuckeName: {envBuckeName}");
+Console.WriteLine($"envOriginalsBucketName: {envOriginalsBucketName}");
 Console.WriteLine($"envObjectKey: {envObjectKey}");
 
 var preSignedUrlRequest = new GetPreSignedUrlRequest
 {
-    BucketName = envBuckeName,
+    BucketName = envOriginalsBucketName,
     Key = $"{envObjectKey}.mp4",
     Expires = DateTime.Now.AddMinutes(30)
 };
@@ -41,7 +42,7 @@ for (int i = 0; i < files.Count; i++)
 
     var putObjectRequest = new PutObjectRequest
     {
-        BucketName = $"{Constants.AppName.ToHypenCase()}-encoded",
+        BucketName = envEncodedBucketName,
         Key = @$"{envObjectKey}.mp4",
         FilePath = file,
         ContentType = "video/mp4",
