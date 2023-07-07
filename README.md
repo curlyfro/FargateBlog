@@ -8,6 +8,8 @@ It uses the [.NET CLI](https://docs.microsoft.com/dotnet/articles/core/) to comp
 
 ## Installation instructions
 
+download .NET+
+
 download nodejs
 https://nodejs.org/
 * `dotnet tool install -g aws.deploy.tools`
