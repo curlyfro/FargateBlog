@@ -20,7 +20,7 @@ public class NetworkStack : Stack
             VpcName = vpnName,
             IpAddresses = IpAddresses.Cidr("10.0.0.0/16"),
             MaxAzs = 2,
-            NatGateways = 1,
+            NatGateways = 0,
             SubnetConfiguration = new[]
             {
                 new SubnetConfiguration
@@ -43,37 +43,56 @@ public class NetworkStack : Stack
         {
             Vpc = Vpc,
             SecurityGroupName = vpcSecurityGroupName,
-            AllowAllOutbound = true,
         });
         VpcSecurityGroup = vpcSecurityGroup;
 
         var repositoryName = $"{Constants.AppName.ToHypenCase()}-repository";
-        var repository = new Repository(this, repositoryName, new RepositoryProps
+        try
         {
-            RepositoryName = repositoryName,
-        });
-
-        var clusterName = $"{Constants.AppName.ToHypenCase()}-cluster";
-        new Cluster(this, clusterName, new ClusterProps
-        {
-            ClusterName = clusterName,
-            Vpc = Vpc
-        });
-
-        var taskDefinitionName = $"{Constants.AppName.ToHypenCase()}-encoding-task-def";
-        var taskDefinition = new FargateTaskDefinition(this, taskDefinitionName, new FargateTaskDefinitionProps
-        {
-            Family = taskDefinitionName,
-            RuntimePlatform = new RuntimePlatform
+            var repository = new Repository(this, repositoryName, new RepositoryProps
             {
-                CpuArchitecture = CpuArchitecture.X86_64,
-                OperatingSystemFamily = OperatingSystemFamily.LINUX
-            },
-            TaskRole = props.EcsTaskExecutionRole,
-            ExecutionRole = props.EcsTaskExecutionRole,
-            Cpu = 4096,
-            MemoryLimitMiB = 8192,
-        });
+                RepositoryName = repositoryName,
+            });
+        }
+        catch (System.Exception)
+        {
+        }
+
+        try
+        {
+            var clusterName = $"{Constants.AppName.ToHypenCase()}-cluster";
+            new Cluster(this, clusterName, new ClusterProps
+            {
+                ClusterName = clusterName,
+                Vpc = Vpc
+            });
+        }
+        catch (System.Exception)
+        {
+        }
+
+        FargateTaskDefinition taskDefinition = null;
+
+        try
+        {
+            var taskDefinitionName = $"{Constants.AppName.ToHypenCase()}-encoding-task-def";
+            taskDefinition = new FargateTaskDefinition(this, taskDefinitionName, new FargateTaskDefinitionProps
+            {
+                Family = taskDefinitionName,
+                RuntimePlatform = new RuntimePlatform
+                {
+                    CpuArchitecture = CpuArchitecture.X86_64,
+                    OperatingSystemFamily = OperatingSystemFamily.LINUX
+                },
+                TaskRole = props.EcsTaskExecutionRole,
+                ExecutionRole = props.EcsTaskExecutionRole,
+                Cpu = 4096,
+                MemoryLimitMiB = 8192,
+            });
+        }
+        catch (System.Exception)
+        {
+        }
 
         try
         {

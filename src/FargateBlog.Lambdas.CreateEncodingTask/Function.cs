@@ -41,12 +41,12 @@ public class Function
         foreach (S3Event.S3EventNotificationRecord? message in evnt.Records)
         {
             await CreateEcsTaskAsync(
-                privateSubnet1, 
-                privateSubnet2, 
+                privateSubnet1,
+                privateSubnet2,
                 vpcSecurityGroup,
                 originalsBucketName,
                 encodedBucketName,
-                message, 
+                message,
                 context);
         }
     }
@@ -65,7 +65,7 @@ public class Function
             var environment = new List<Amazon.ECS.Model.KeyValuePair>();
             var envEnableMetaData = new Amazon.ECS.Model.KeyValuePair() { Name = "ECS_ENABLE_CONTAINER_METADATA", Value = "true" };
             var envBuckeName = new Amazon.ECS.Model.KeyValuePair() { Name = "BuckeName", Value = message.S3.Bucket.Name };
-            var envKey = new Amazon.ECS.Model.KeyValuePair() { Name = "ObjectKey", Value = Path.GetFileNameWithoutExtension(message.S3.Object.Key) };
+            var envKey = new Amazon.ECS.Model.KeyValuePair() { Name = "ObjectKey", Value = message.S3.Object.Key };
             var envPrivateSubnet1 = new Amazon.ECS.Model.KeyValuePair() { Name = "privateSubnet1", Value = privateSubnet1 };
             var envPrivateSubnet2 = new Amazon.ECS.Model.KeyValuePair() { Name = "privateSubnet2", Value = privateSubnet2 };
             var envpcSecurityGroup = new Amazon.ECS.Model.KeyValuePair() { Name = "vpcSecurityGroup", Value = vpcSecurityGroup };
@@ -84,8 +84,8 @@ public class Function
 
             var encodingTaskDef = $"{Constants.AppName.ToHypenCase()}-encoding-task-def";
             var encodingContainer = $"{Constants.AppName.ToHypenCase()}-encoding-container";
-            var response = await _ecsRepository.RunTaskAsync(encodingTaskDef, encodingContainer, environment); 
-            
+            var response = await _ecsRepository.RunTaskAsync(encodingTaskDef, encodingContainer, environment);
+
             context.Logger.LogInformation($"called run task...");
 
             if (response.HttpStatusCode != System.Net.HttpStatusCode.OK)

@@ -22,14 +22,15 @@ Console.WriteLine($"envObjectKey: {envObjectKey}");
 var preSignedUrlRequest = new GetPreSignedUrlRequest
 {
     BucketName = envOriginalsBucketName,
-    Key = $"{envObjectKey}.mp4",
+    Key = envObjectKey,
     Expires = DateTime.Now.AddMinutes(30)
 };
 var preSignedUrl = s3Client.GetPreSignedURL(preSignedUrlRequest);
 
 Console.WriteLine($"got presigned url: {preSignedUrl}");
 
-var outputFile = @$"/home/{envObjectKey}.mp4";
+var outputFileNameWithExtension = Path.GetFileNameWithoutExtension(envObjectKey);
+var outputFile = @$"/home/{outputFileNameWithExtension}.mp4";
 var argument = @$"-protocol_whitelist file,http,https,tcp,tls -i {preSignedUrl} {outputFile}";
 var conversion = await FFmpeg.Conversions.New().Start(argument);
 
@@ -43,7 +44,7 @@ for (int i = 0; i < files.Count; i++)
     var putObjectRequest = new PutObjectRequest
     {
         BucketName = envEncodedBucketName,
-        Key = @$"{envObjectKey}.mp4",
+        Key = @$"{outputFileNameWithExtension}.mp4",
         FilePath = file,
         ContentType = "video/mp4",
         StorageClass = S3StorageClass.IntelligentTiering

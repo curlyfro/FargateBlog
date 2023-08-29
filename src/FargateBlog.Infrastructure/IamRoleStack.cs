@@ -37,7 +37,8 @@ public class IamRoleStack : Stack
                 ManagedPolicy.FromAwsManagedPolicyName("CloudWatchFullAccess"),
                 ManagedPolicy.FromAwsManagedPolicyName("AmazonS3FullAccess"),
                 ManagedPolicy.FromAwsManagedPolicyName("AmazonECS_FullAccess"),
-                ManagedPolicy.FromAwsManagedPolicyName("service-role/AmazonECSTaskExecutionRolePolicy"),
+                ManagedPolicy.FromAwsManagedPolicyName("AWSLambdaExecute"),
+               // ManagedPolicy.FromAwsManagedPolicyName("service-role/AmazonECSTaskExecutionRolePolicy"),
             }
         });
         EcsTaskExecutionRole = ecsTaskExecutionRole;

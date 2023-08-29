@@ -16,14 +16,22 @@ public class S3Stack : Stack
         var originalsBucketName = $"{Constants.AppName.ToHypenCase()}-originals-{props.Env.Account}-{props.Env.Region.ToHypenCase()}";
         var originalsBucket = new Bucket(this, originalsBucketName, new BucketProps
         {
-            BucketName = originalsBucketName
+            BucketName = originalsBucketName,
+            // !DO NOT USE THESE TWO SETTINGS FOR PRODUCTION DEPLOYMENTS - YOU WILL LOSE DATA
+            // WHEN THE STACK IS DELETED!
+            AutoDeleteObjects = true,
+            RemovalPolicy = RemovalPolicy.DESTROY
         });
         props.OriginalsBucketName = originalsBucketName;
 
         var encodedBucketName = $"{Constants.AppName.ToHypenCase()}-encoded-{props.Env.Account}-{props.Env.Region.ToHypenCase()}";
         var encodedBucke = new Bucket(this, encodedBucketName, new BucketProps
         {
-            BucketName = encodedBucketName
+            BucketName = encodedBucketName,
+            // !DO NOT USE THESE TWO SETTINGS FOR PRODUCTION DEPLOYMENTS - YOU WILL LOSE DATA
+            // WHEN THE STACK IS DELETED!
+            AutoDeleteObjects = true,
+            RemovalPolicy = RemovalPolicy.DESTROY
         });
         props.EncodedBucketName = encodedBucketName;
 

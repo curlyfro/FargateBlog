@@ -3,7 +3,7 @@
 public static class Constants
 {
     public static readonly string AppName = "FargateBlog";
-    public static string Region { get; set; } = Environment.GetEnvironmentVariable("AWS_REGION") ?? "us-east-1";
+    public static readonly string Region = Environment.GetEnvironmentVariable("AWS_REGION") ?? "us-east-1";
     public static string EncodingClusterName { get; set; } = "encoding-cluster";
     public static string EncodingQueueName { get; set; } = "encoding-queue";
 }
